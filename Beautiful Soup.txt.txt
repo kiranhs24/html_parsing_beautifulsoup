@@ -1,0 +1,43 @@
+import requests
+from bs4 import BeautifulSoup
+from pymongo import MongoClient
+
+# Create connection to MongoDB
+client = MongoClient('url', port-number)
+
+# Establishing connection to Database
+db = client['database name']
+
+# Connecting to collection
+collection1 = db['name of collection 1']
+collection2 = db['name of collection 2']
+
+# function that will parse the html page 
+def parse_html(html, id):
+    doc = BeautifulSoup(html, 'html.parser')
+    role = doc.select('h3.grid--cell:nth-child(2)')
+    # print(role[0].text)
+    collection1.update_one({"Id":id}, {"$set":{"Current Position":role[0].text}})
+
+# function that will hit the url and save the html to db
+def process(document):
+    id = document.get('Id')
+    url = "url of the websitew u want to scrape"+id
+    response = requests.get(url)
+    if response.status_code == 200:
+        html = response.text
+        collection2.insert_one({"Id":id})
+        # collection2.insert_one({"html":# html})
+        collection2.update_one({"Id": id}, {"$set": {"html": html}})
+        parse_html(html, id)
+
+
+# main code
+for document in collection1.find():
+    # print(document.get('Id'))
+    # print(document.get('DisplayName'))
+    id = document.get('Id')
+    print(id)
+    process(document)
+    if id == 5:
+        break
