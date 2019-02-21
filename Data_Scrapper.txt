@@ -1,0 +1,168 @@
+import requests
+#from bs4 import BeautifulSoup
+from pymongo import MongoClient
+import re
+import time
+
+# Create connection to MongoDB
+client = MongoClient("192.168.101.144")
+
+# Establishing connection to Database
+db = client['stackoverflow']
+
+# Connecting to collection
+collection1 = db['users']
+collection2 = db['users_html']
+
+regx = re.compile("india",re.IGNORECASE)
+
+
+# function that will parse the html page
+def parse_html(html, id):
+    # role = doc.select('h3.grid--cell:nth-child(2)')
+    # current_position = role[0].text.strip()
+    doc = BeautifulSoup(html, 'html.parser')
+    div_content = doc.find_all('div', class_='grid fd-column gs8 gsy')
+    role = div_content[0]
+    current_position = role.h3.text.strip()
+    # print(current_position)
+    if current_position == "\n" or current_position == " ":
+        current_position = " "
+
+    collection1.update_one({"Id":id}, {"$set":{"CurrentPosition":current_position}})
+
+
+# function that will hit the url and save the html to db
+def process(record):
+    record_id = record.get('Id')
+    url = "https://stackoverflow.com/users/"+record_id
+    time.sleep(3)
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        html = response.text
+        collection1.update_one({"_id": record.get('_id')},{"$set":{"raw_html":html}})
+        # parse_html(html, record_id)
+
+
+
+# main code
+i = 0
+print(collection1.count({"Location":regx}))
+
+while True:
+    try:
+	import requests
+#from bs4 import BeautifulSoup
+from pymongo import MongoClient
+import re
+import time
+
+# Create connection to MongoDB
+client = MongoClient("192.168.101.144")
+
+# Establishing connection to Database
+db = client['stackoverflow']
+
+# Connecting to collection
+collection1 = db['users']
+collection2 = db['users_html']
+
+regx = re.compile("india",re.IGNORECASE)
+
+
+# function that will parse the html page
+def parse_html(html, id):
+    # role = doc.select('h3.grid--cell:nth-child(2)')
+    # current_position = role[0].text.strip()
+    doc = BeautifulSoup(html, 'html.parser')
+    div_content = doc.find_all('div', class_='grid fd-column gs8 gsy')
+    role = div_content[0]
+    current_position = role.h3.text.strip()
+    # print(current_position)
+    if current_position == "\n" or current_position == " ":
+        current_position = " "
+
+    collection1.update_one({"Id":id}, {"$set":{"CurrentPosition":current_position}})
+
+
+# function that will hit the url and save the html to db
+def process(record):
+    record_id = record.get('Id')
+    url = "https://stackoverflow.com/users/"+record_id
+    time.sleep(3)
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        html = response.text
+        collection1.update_one({"_id": record.get('_id')},{"$set":{"raw_html":html}})
+        # parse_html(html, record_id)
+
+
+
+# main code
+i = 0
+print(collection1.count({"Location":regx}))
+
+while True:
+    try:
+	import requests
+#from bs4 import BeautifulSoup
+from pymongo import MongoClient
+import re
+import time
+
+# Create connection to MongoDB
+client = MongoClient("192.168.101.144")
+
+# Establishing connection to Database
+db = client['stackoverflow']
+
+# Connecting to collection
+collection1 = db['users']
+collection2 = db['users_html']
+
+regx = re.compile("india",re.IGNORECASE)
+
+
+# function that will parse the html page
+def parse_html(html, id):
+    # role = doc.select('h3.grid--cell:nth-child(2)')
+    # current_position = role[0].text.strip()
+    doc = BeautifulSoup(html, 'html.parser')
+    div_content = doc.find_all('div', class_='grid fd-column gs8 gsy')
+    role = div_content[0]
+    current_position = role.h3.text.strip()
+    # print(current_position)
+    if current_position == "\n" or current_position == " ":
+        current_position = " "
+
+    collection1.update_one({"Id":id}, {"$set":{"CurrentPosition":current_position}})
+
+
+# function that will hit the url and save the html to db
+def process(record):
+    record_id = record.get('Id')
+    url = "https://stackoverflow.com/users/"+record_id
+    time.sleep(3)
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        html = response.text
+        collection1.update_one({"_id": record.get('_id')},{"$set":{"raw_html":html}})
+        # parse_html(html, record_id)
+
+
+
+# main code
+i = 0
+print(collection1.count({"Location":regx}))
+
+while True:
+    try:
+	for record in collection1.find({"Location":regx, "raw_html": {"$exists":False}},no_cursor_timeout = True):
+            process(record)
+            i += 1
+            print(i)
+    except:
+        continue	
